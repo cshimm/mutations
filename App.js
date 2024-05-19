@@ -1,5 +1,4 @@
-import {Pressable, ScrollView, StyleSheet, Text, TextInput, View} from 'react-native';
-import {QueryClient, QueryClientProvider, useMutation, useQuery} from "@tanstack/react-query";
+import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 import {FetchPosts} from "./components/FetchPosts";
 import {CreatePost} from "./components/CreatePost";
 

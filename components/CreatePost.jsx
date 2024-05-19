@@ -29,7 +29,7 @@ export function CreatePost({queryClient}) {
                         <Text>An error occurred: {mutation.error.message}</Text>
                     ) : null}
 
-                    {mutation.isSuccess ? <Text>Todo added!</Text> : null}
+                    {mutation.isSuccess ? <Text>Post added!</Text> : null}
 
                     <Pressable
                         onPress={() => {
