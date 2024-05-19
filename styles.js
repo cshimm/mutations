@@ -22,7 +22,6 @@ export const styles = StyleSheet.create({
     verticalFlex: {
         flex: 1,
         flexDirection: 'column',
-        // gap: 5
     },
     padding: {
         padding: 50

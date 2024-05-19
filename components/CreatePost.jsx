@@ -22,7 +22,7 @@ export function CreatePost({queryClient}) {
     return (
         <View style={[styles.flexContainer, styles.contentContainer, styles.padding]}>
             {mutation.isPending ? (
-                <Text>'Adding todo...'</Text>
+                <Text>'Adding post...'</Text>
             ) : (
                 <>
                     {mutation.isError ? (
@@ -33,10 +33,10 @@ export function CreatePost({queryClient}) {
 
                     <Pressable
                         onPress={() => {
-                            mutation.mutate({id: new Date(), title: 'Do Laundry'})
+                            mutation.mutate({id: new Date(), title: 'New post'})
                         }}
                     >
-                        <Text style={styles.buttonText}>Create Todo</Text>
+                        <Text style={styles.buttonText}>Create Post</Text>
                     </Pressable>
                 </>
             )}

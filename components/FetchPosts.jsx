@@ -1,7 +1,8 @@
 import {useState} from "react";
 import {useMutation, useQuery} from "@tanstack/react-query";
-import {Pressable, ScrollView, Text, TextInput, View} from "react-native";
+import {Pressable, ScrollView, Text, View} from "react-native";
 import {styles} from '../styles'
+import {EditForm} from "./EditForm";
 
 export function FetchPosts({queryClient}) {
     const [editPostId, setEditPostId] = useState(undefined);
@@ -12,61 +13,36 @@ export function FetchPosts({queryClient}) {
                 return res.json()
             }),
     })
-
+    const mutation = useMutation({
+        mutationKey: ['posts'],
+        mutationFn: (deletedPost) => {
+            return fetch(`https://jsonplaceholder.typicode.com/posts/${deletedPost.id}`, {
+                method: 'DELETE',
+            }).then((response) => response.json())
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries('posts');
+        }
+    })
     function handleEditPressed(id) {
         setEditPostId(id)
     }
-
+    function handleDeletePressed(id) {
+        mutation.mutate({id})
+    }
     if (isFetching) return <Text>'Loading...'</Text>
     if (error) return <Text>{'An error has occurred: '}</Text>
 
-    const EditForm = () => {
-        const [title, onChangeTitle] = useState('');
-        const [body, onChangeBody] = useState('');
-        const mutation = useMutation({
-            mutationKey: ['posts'],
-            mutationFn: (editedPost) => {
-                return fetch(`https://jsonplaceholder.typicode.com/posts/${editedPost.id}`, {
-                    method: 'PUT',
-                    body: JSON.stringify(editedPost),
-                    headers: {
-                        'Content-type': 'application/json; charset=UTF-8',
-                    },
-                }).then((response) => response.json())
-            },
-            onSuccess: () => {
-                queryClient.invalidateQueries('posts');
-            }
-        })
-
-        function handleSubmit(id) {
-            mutation.mutate({id, title, body})
-            setEditPostId(undefined)
-        }
-
-        return <View style={[styles.horizontalFlex, styles.centered]}>
-            <Text>New Title</Text>
-            <TextInput
-                style={styles.input}
-                onChangeText={onChangeTitle}
-                value={title}
-            />
-            <Text>New Body</Text>
-            <TextInput
-                style={styles.input}
-                onChangeText={onChangeBody}
-                value={body}
-            />
-            <Pressable onPress={() => handleSubmit(editPostId)}>
-                <Text style={styles.buttonText}>Submit</Text>
-            </Pressable>
-        </View>
-    }
     return (
         <ScrollView contentContainerStyle={[styles.contentContainer]}>
             {
                 editPostId !== undefined && (
-                    <EditForm id={editPostId}/>
+                    <EditForm
+                        id={editPostId}
+                        queryClient={queryClient}
+                        editPostId={editPostId}
+                        setEditPostId={setEditPostId}
+                    />
                 )
             }
             {
@@ -80,6 +56,11 @@ export function FetchPosts({queryClient}) {
                             onPress={() => handleEditPressed(post.id)}
                             style={[{alignItems: 'flex-end'}, {height: 'fit-content'}]}>
                             <Text style={[styles.buttonText]}>Edit</Text>
+                        </Pressable>
+                        <Pressable
+                            onPress={() => handleDeletePressed(post.id)}
+                            style={[{alignItems: 'flex-end'}, {height: 'fit-content'}]}>
+                            <Text style={[styles.buttonText]}>Delete</Text>
                         </Pressable>
                     </View>
                 })
